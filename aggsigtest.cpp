@@ -1,27 +1,65 @@
 #include "aggsigtest.hpp"
 
-void aggsigtest::test1(const bls_g1& pk, const bls_g2& sig)
+void aggsigtest::testg1add(const bls_g1& op1, const bls_g1& op2, const bls_g1& res)
 {
-   bool ok = bls_verify(pk, message_1, sig);
-   check(ok == true, "signature verification failed");
+    bls_g1 r;
+    bls_g1_add(op1, op2, r);
+    check(r == res, "bls_g1_add test failed");
 }
 
-void aggsigtest::test2(const std::vector<bls_g1>& pks, const bls_g1& pk_agg)
+void aggsigtest::testg2add(const bls_g2& op1, const bls_g2& op2, const bls_g2& res)
 {
-   bls_g1 pa;
-   bls_aggregate_public_keys(pks, &pa);
-   check(std::equal(pa.begin(), pa.end(), pk_agg.begin()), "public key aggregation verification failed");
+    bls_g2 r;
+    bls_g2_add(op1, op2, r);
+    check(r == res, "bls_g2_add test failed");
 }
 
-void aggsigtest::test3(const std::vector<bls_g2>& sigs, const bls_g2& sig_agg)
+void aggsigtest::testg1mul(const bls_g1& point, const bls_scalar& scalar, const bls_g1& res)
 {
-   bls_g2 sa;
-   bls_aggregate_signatures(sigs, &sa);
-   check(std::equal(sa.begin(), sa.end(), sig_agg.begin()), "signature aggregation verification failed");
+    bls_g1 r;
+    bls_g1_mul(point, scalar, r);
+    check(r == res, "bls_g1_mul test failed");
 }
 
-void aggsigtest::test4(const std::vector<bls_g1>& pks, const bls_g2& sig)
+void aggsigtest::testg2mul(const bls_g2& point, const bls_scalar& scalar, const bls_g2& res)
 {
-   bool ok = bls_aggregate_verify(pks, {message_1, message_2, message_3}, sig);
-   check(ok == true, "aggregate signature verification failed");
+    bls_g2 r;
+    bls_g2_mul(point, scalar, r);
+    /*
+    uint64_t N = 144;
+    constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    std::string s(2 + N * 2, ' ');
+    s[0] = '0';
+    s[1] = 'x';
+    for(uint64_t i = 0; i < N; i++)
+    {
+        s[2 + 2*i]     = hexmap[(r[i] & 0xF0) >> 4];
+        s[2 + 2*i+1]   = hexmap[ r[i] & 0x0F      ];
+    }
+    */
+    check(r == res, "bls_g2_mul test failed");
+}
+
+void aggsigtest::testg1exp(const std::vector<bls_g1>& points, const std::vector<bls_scalar>& scalars, const bls_g1& res)
+{
+    check(points.size() == scalars.size(), "number of elements in points and scalars must be equal");
+    bls_g1 r;
+    bls_g1_exp(points, scalars, r);
+    check(r == res, "bls_g1_exp test failed");
+}
+
+void aggsigtest::testg2exp(const std::vector<bls_g2>& points, const std::vector<bls_scalar>& scalars, const bls_g2& res)
+{
+    check(points.size() == scalars.size(), "number of elements in points and scalars must be equal");
+    bls_g2 r;
+    bls_g2_exp(points, scalars, r);
+    check(r == res, "bls_g2_exp test failed");
+}
+
+void aggsigtest::testpairing(const std::vector<bls_g1>& g1_points, const std::vector<bls_g2>& g2_points, const bls_gt& res)
+{
+    check(g1_points.size() == g2_points.size(), "number of elements in g1_points and g2_points must be equal");
+    bls_gt r;
+    bls_pairing(g1_points, g2_points, r);
+    check(r == res, "bls_pairing test failed");
 }

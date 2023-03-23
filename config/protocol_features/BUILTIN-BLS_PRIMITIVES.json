@@ -1,11 +1,11 @@
 {
   "protocol_feature_type": "builtin",
   "dependencies": [],
-  "description_digest": "997de2624c039e38993953ff1091aeb1ecff723d06fe78a5ade08931b0b22896",
+  "description_digest": "2c302889ce2db124878f7c6092cf27519d450559ed2fdfbad14f532d90fc5139",
   "subjective_restrictions": {
     "earliest_allowed_activation_time": "1970-01-01T00:00:00.000",
     "preactivation_required": true,
     "enabled": true
   },
-  "builtin_feature_codename": "AGGREGATE_SIGNATURES"
+  "builtin_feature_codename": "BLS_PRIMITIVES"
 }
