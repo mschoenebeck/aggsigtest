@@ -63,3 +63,17 @@ void aggsigtest::testpairing(const std::vector<bls_g1>& g1_points, const std::ve
     bls_pairing(g1_points, g2_points, r);
     check(r == res, "bls_pairing test failed");
 }
+
+void aggsigtest::testg1map(const bls_fp& e, const bls_g1& res)
+{
+    bls_g1 r;
+    bls_g1_map(e, r);
+    check(r == res, "bls_g1_map test failed");
+}
+
+void aggsigtest::testg2map(const bls_fp2& e, const bls_g2& res)
+{
+    bls_g2 r;
+    bls_g2_map(e, r);
+    check(r == res, "bls_g2_map test failed");
+}
