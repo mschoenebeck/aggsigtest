@@ -1,5 +1,7 @@
 #include "aggsigtest.hpp"
 #include "sha256.hpp"
+#include "blake3.h"
+#include "blake2s.h"
 
 using namespace bls12_381;
 
@@ -28,18 +30,6 @@ void aggsigtest::testg2mul(const bls_g2& point, const bls_scalar& scalar, const 
 {
     bls_g2 r;
     bls_g2_mul(point, scalar, r);
-    /*
-    uint64_t N = 144;
-    constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    std::string s(2 + N * 2, ' ');
-    s[0] = '0';
-    s[1] = 'x';
-    for(uint64_t i = 0; i < N; i++)
-    {
-        s[2 + 2*i]     = hexmap[(r[i] & 0xF0) >> 4];
-        s[2 + 2*i+1]   = hexmap[ r[i] & 0x0F      ];
-    }
-    */
     check(r == res, "bls_g2_mul test failed");
 }
 
@@ -159,19 +149,15 @@ bls_g2 g2_fromMessage(const std::vector<uint8_t>& msg, const string& dst)
 
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf));
     bls_fp_mod(*reinterpret_cast<array<uint8_t, 64>*>(&k[0]), *reinterpret_cast<bls_fp*>(&t[0]));
-    //t.c0 = fp::modPrime(k);
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 64));
     bls_fp_mod(*reinterpret_cast<array<uint8_t, 64>*>(&k[0]), *reinterpret_cast<bls_fp*>(&t[48]));
-    //t.c1 = fp::modPrime(k);
 
     bls_g2_map(t, p);
 
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 2*64));
     bls_fp_mod(*reinterpret_cast<array<uint8_t, 64>*>(&k[0]), *reinterpret_cast<bls_fp*>(&t[0]));
-    //t.c0 = fp::modPrime(k);
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 3*64));
     bls_fp_mod(*reinterpret_cast<array<uint8_t, 64>*>(&k[0]), *reinterpret_cast<bls_fp*>(&t[48]));
-    //t.c1 = fp::modPrime(k);
 
     bls_g2_map(t, q);
     bls_g2_add(p, q, res);
@@ -199,4 +185,62 @@ void aggsigtest::verify(const bls_g1& pk, const bls_g2& sig)
     bls_gt r;
     bls_pairing(g1_points, g2_points, r);
     check(r == GT_ONE, "bls signature verify failed");
+}
+
+void aggsigtest::blake3wasm()
+{
+    uint8_t output[BLAKE3_OUT_LEN];
+    for(int i = 0; i < 10000; i++)
+    {
+        msg[i%msg.size()] = i%256;
+        // Initialize the hasher.
+        blake3_hasher hasher;
+        blake3_hasher_init(&hasher);
+        blake3_hasher_update(&hasher, msg.data(), msg.size());
+        // Finalize the hash. BLAKE3_OUT_LEN is the default output length, 32 bytes.
+        blake3_hasher_finalize(&hasher, output, BLAKE3_OUT_LEN);
+        check(!(output[0] == output[1] && output[1] == output[2] && output[2] == output[3] && output[3] == output[4]), "error");
+    }
+    // print digest as hex string
+    uint64_t N = BLAKE3_OUT_LEN;
+    constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    std::string s(2 + N * 2, ' ');
+    s[0] = '0';
+    s[1] = 'x';
+    for(uint64_t i = 0; i < N; i++)
+    {
+        s[2 + 2*i]     = hexmap[(output[i] & 0xF0) >> 4];
+        s[2 + 2*i+1]   = hexmap[ output[i] & 0x0F      ];
+    }
+    // s == "0x8f5c7c8a3f7700d8d9f3fc0add1e95f17fcb1f258a4a520e6b1fd58b8af0f55e"
+    //check(output[0] == 0x8f, s);
+}
+
+void aggsigtest::blake2swasm()
+{
+    uint8_t output[32];
+    for(int i = 0; i < 10000; i++)
+    {
+        //msg[i%msg.size()] = i%256;
+        Blake2sContext hasher;
+        blake2sInit(&hasher, NULL, 0, 32);
+        //blake2sUpdate(&hasher, msg.data(), msg.size());
+        blake2sUpdate(&hasher, NULL, 0);
+        blake2sFinal(&hasher, output);
+        check(!(output[0] == output[1] && output[1] == output[2] && output[2] == output[3] && output[3] == output[4]), "error");
+    }
+    // print digest as hex string
+    uint64_t N = 32;
+    constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    std::string s(2 + N * 2, ' ');
+    s[0] = '0';
+    s[1] = 'x';
+    for(uint64_t i = 0; i < N; i++)
+    {
+        s[2 + 2*i]     = hexmap[(output[i] & 0xF0) >> 4];
+        s[2 + 2*i+1]   = hexmap[ output[i] & 0x0F      ];
+    }
+    // s == "0x59252351fde518bf747b24cb4e73a6abf30ea6c9998626ebc4bf795c452a2122"
+    // s == "0x69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9" // zero input, zero key
+    check(output[0] == 0x69, s);
 }

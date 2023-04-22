@@ -1,3 +1,3 @@
-rm -r ./data
+rm -rf ./data
 
-rm chain.log
+rm -f chain.log
