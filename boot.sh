@@ -1,4 +1,4 @@
-/home/mschoenebeck/dev/leap/build/bin/cleos wallet unlock --password PW5KEUAyauNvac2YQ9Da11dPB5bBEkrWB1HbXKWvfHRhvBLzse7fx
+/home/mschoenebeck/dev/leap/build/bin/cleos wallet unlock -n test --password PW5JZikopafgH7srvTti8PAuCQBBvqcwX9qfrM5rrskVuRD3bLE4U
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.bpay EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.msig EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.names EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -33,6 +33,9 @@ sleep 1
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["d528b9f6e9693f45ed277af93474fd473ce7d831dae2180cca35d907bd10cb40"]' -p eosio
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["5443fcf88330c586bc0e5f3dee10e7f63c76c00249c87fe4fbf7f38c082006b4"]' -p eosio
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["c58504ee14e94e2b467fddf9d0c37b70b78ca7783f63636cda3cbf1d476c69cf"]' -p eosio
+#/home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["0ec7e080177b2c02b278d5088611686b49d739925a92d9bfcacd7fc6b74053bd"]' -p eosio
+/home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["6bcb40a24e49c26d0a60513b6aeb8551d264e4717f306b81a37a5afb3b47cedc"]' -p eosio
+/home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["35c2186cc36f7bb4aeaf4487b36e57039ccf45a9136aa856a5d569ecca55ef2b"]' -p eosio
 echo "features activated"
 /home/mschoenebeck/dev/leap/build/bin/cleos set contract eosio /home/mschoenebeck/dev/reference-contracts/build/contracts/eosio.system/
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio init '["0", "4,EOS"]' -p eosio@active
