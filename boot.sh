@@ -1,4 +1,4 @@
-/home/mschoenebeck/dev/leap/build/bin/cleos wallet unlock -n test --password PW5JZikopafgH7srvTti8PAuCQBBvqcwX9qfrM5rrskVuRD3bLE4U
+/home/mschoenebeck/dev/leap/build/bin/cleos wallet unlock -n test --password PW5KjNG9Tkb97TAmDsB44N9MvLii7nAAfXFQtYk9qDsEdE4VuhNia
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.bpay EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.msig EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 /home/mschoenebeck/dev/leap/build/bin/cleos create account eosio eosio.names EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -37,6 +37,8 @@ sleep 1
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["6bcb40a24e49c26d0a60513b6aeb8551d264e4717f306b81a37a5afb3b47cedc"]' -p eosio
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio activate '["35c2186cc36f7bb4aeaf4487b36e57039ccf45a9136aa856a5d569ecca55ef2b"]' -p eosio
 echo "features activated"
+sleep 1
+
 /home/mschoenebeck/dev/leap/build/bin/cleos set contract eosio /home/mschoenebeck/dev/reference-contracts/build/contracts/eosio.system/
 /home/mschoenebeck/dev/leap/build/bin/cleos push action eosio init '["0", "4,EOS"]' -p eosio@active
 
@@ -62,6 +64,8 @@ echo "test bls_g2_map (testg2map)"
 /home/mschoenebeck/dev/leap/build/bin/cleos push action aggsigtest testg2map '{"e":"d4f2cfec99387809574fcc2dba105603d950d490e2bebe0c212c05e16b784745ef4fe8e70b554d0a52fe0bed5ea6690ade2348eb8972a96740a430df162d920e175f5923a76d18650ea24a8ec06d414c6d1d218d673dac3619a1a5c142785708","res":"9968ae9e9bf3d22ec6c9670efa64ea23d4966b41bb25f76ea2ef71b96fa35e031adb866b3df234065b9aa72d0b12ab14978678279eb944f05b5af53d91e700b57aa87076727def2e9f2fba3cf6784a25591ae1669c2cf15cdcf038b826d1e81178bd7b59b7e911e0c2d11d6805756222201e3364f8010fb651939eca63f7e77709042ee1030cd938f53905a714e815112a7dfeed207757d30382f69617014bc683a175d0dfbd74f2684de26c771f3f55a538e6d2f969eb282bddfec4fc08dd18f37df0889292f288dff631b02f07b88134410fd86526d234d75b9a329bc9a8b6e71c7ad516b87af9717d962cba5d2b19fd1b77746f1e484a54e6aec81ede148f01e2c8283c598a4976182d2ce287fe6888e23996ce03b03ce6709e4aa8e66416"}' -p aggsigtest@active
 echo "test signature verify (verify)"
 /home/mschoenebeck/dev/leap/build/bin/cleos push action aggsigtest verify '{"pk":"90ace8f520a5e056eab099d4e6a6f761a8f51301e1e15910908453007d94e33f8e86b834808dcb5323313153be066d01d49660f594a805ad9a4249d0af4190407e3e221e1d6fdad866e022308357776ed5e396777c7f7dfd020e7d736511ac06fdff02000000097602000cc40b00f4ebba58c7535798485f455752705358ce776dec56a2971a075c93e480fac35ef615","sig":"3c38a59a6c016fb598d8da531e205e4d8e0953868675760f8333c7fee725d81ddf246db75792eb7cf0ab8aeba051800babf407ddd8ec721db83fe1b1098b9334bf45ad63f10cf5a6b56b60f74b391615d7373088d182711358a6032f8c31fe1694ff3f3254a7e02e3e2811ce0becdec6031b193b5541d577b49cdb6cf09f919917b09776b1f05c977ffa17c2de876205f402f7e4fb00896cb9b3df1a25f761239e5625ddaab4bfacce8e6c505c13eb73632b12cedd30b0804fe29f317015c307ec2dfe48cb5060d84fd2c2756f41ae79f4c0a3a37ba62b22877b23042bb30a063d4ad3255de844545e89f0886041b513410df52d380fac23c31277997381115651c02014a9aeeaaec85c34b81a93ee73cd712ce241f394dc860ea5e792b0f50e"}' -p aggsigtest@active
+echo "test garbage input (testgarbage)"
+/home/mschoenebeck/dev/leap/build/bin/cleos push action aggsigtest testgarbage '{}' -p aggsigtest@active
 echo "test BLAKE3 WASM (blake3wasm)"
 /home/mschoenebeck/dev/leap/build/bin/cleos push action aggsigtest blake3wasm '{}' -p aggsigtest@active
 echo "test BLAKE2s WASM (blake2swasm)"

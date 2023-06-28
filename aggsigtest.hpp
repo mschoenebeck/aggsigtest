@@ -69,6 +69,11 @@ public:
      */
     ACTION verify(const std::vector<uint8_t>& pk, const std::vector<uint8_t>& sig);
 
+    /**
+     * Test garbage input for pairing & map functions.
+    */
+    ACTION testgarbage();
+
     ACTION blake3wasm();
     ACTION blake2swasm();
 };
