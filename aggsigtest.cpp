@@ -160,13 +160,7 @@ void g2_fromMessage(const std::vector<uint8_t>& msg, const string& dst, bls_g2& 
     xmd_sh256(buf, 4 * 64, msg.data(), msg.size(), reinterpret_cast<const uint8_t*>(dst.c_str()), dst.length());
 
     array<uint64_t, 8> k;
-    //std::vector<uint8_t> t;
-    //t.resize(96);
-    bls_fp t[2];
-    //std::vector<uint8_t> p, q, res;
-    //p.resize(288);
-    //q.resize(288);
-    //res.resize(288);
+    bls_fp2 t;
     bls_g2 p, q;
 
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf));
@@ -174,14 +168,14 @@ void g2_fromMessage(const std::vector<uint8_t>& msg, const string& dst, bls_g2& 
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 64));
     bls_fp_mod(reinterpret_cast<uint8_t*>(&k[0]), t[1]);
 
-    bls_g2_map(*reinterpret_cast<const bls_fp2*>(t), p);
+    bls_g2_map(t, p);
 
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 2*64));
     bls_fp_mod(reinterpret_cast<uint8_t*>(&k[0]), t[0]);
     k = scalar_fromBytesBE(*reinterpret_cast<array<uint8_t, 64>*>(buf + 3*64));
     bls_fp_mod(reinterpret_cast<uint8_t*>(&k[0]), t[1]);
 
-    bls_g2_map(*reinterpret_cast<const bls_fp2*>(t), q);
+    bls_g2_map(t, q);
     bls_g2_add(p, q, res);
 }
 
