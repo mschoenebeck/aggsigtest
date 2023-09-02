@@ -74,6 +74,23 @@ public:
     */
     ACTION testgarbage();
 
+    /**
+     * Contract version of pop_verify. Corresponding pop_prove() implementation:
+     *
+     * g2 pop_prove(const array<uint64_t, 4>& sk)
+     * {
+     *     g1 pk = public_key(sk);
+     *     // Note: we change the message from compressed bytes to RAW Affine bytes (little-endian)
+     *     //array<uint8_t, 48> msg = pk.toCompressedBytesBE();
+     *     array<uint8_t, 96> msg = pk.toAffineBytesLE(true);
+     *     g2 hashed_key = fromMessage(vector<uint8_t>(msg.begin(), msg.end()), POP_CIPHERSUITE_ID);
+     *     return hashed_key.mulScalar(sk);
+     * }
+     *
+     * Note that pubkey & signature_proof must be provided as RAW AFFINE LITTLE-ENDIAN bytes!
+    */
+    ACTION popverify(const std::vector<uint8_t>& pubkey, const std::vector<uint8_t>& signature_proof);
+
     ACTION blake3wasm();
     ACTION blake2swasm();
 };
